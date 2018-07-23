@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta chartset="UTF-8">
+    <title>sample gluttonous snake</title>
+    <style>
+        .divContainer {
+            width: 800px;
+            height: 400px;
+            margin: 0 auto;
+            position: relative;
+            border-top: 1px solid #ccc;
+            border-left: 1px solid #ccc;
+        }
+        .grid {
+            display: inline-block;
+            width: 19px;
+            height: 19px;
+            background-color: #ccc;
+            float: left;
+            border-left: 1px solid white;
+            border-bottom: 1px solid white;
+        }
+        .food {
+            width: 20px;
+            height: 20px;
+            background-color: #D2A2CC;
+            position: absolute;
+        }
+        .snakeNode {
+            width: 20px;
+            height: 20px;
+            position: absolute;
+        }
+    </style>
+</head>
+<body>
+<script>
+    var playGrounds;
+    var food;
+    var timer;
+    var direction = '';
+    var body = [[3,2,'#467500',null],[2,2,'#64A600',null],[1,2,'#64A600',null]];
+    var foodPosNum = [0, 0];
+    var sum = 0;
+    window.onload = function(){
+        //create playgrounds
+        playGrounds = document.createElement('div');
+        playGrounds.className = 'divContainer';
+        document.getElementsByTagName('body')[0].appendChild(playGrounds);
+        //create playgrounds grid by span
+        for(var i = 0; i< 800; i++){
+            var divEle = document.createElement('span');
+            divEle.className = 'grid';
+            playGrounds.appendChild(divEle);
+        }
+        //create food
+        food = document.createElement('div');
+        food.className = 'food';
+        playGrounds.appendChild(food);
+        updateFood();
+        //create snake
+        showSnake();
+        //snake start move
+        timer = setInterval('snakeMove()', 200);
+        document.onkeydown = function(){
+            var event = window.event || event;
+            var keyCode = event.keyCode;
+            //console.log(keyCode);
+            switch (keyCode) {
+                case 37:
+                    direction = 'left';
+                    break;
+                case 38:
+                    direction = 'up';
+                    break;
+                case 39:
+                    direction = 'right';
+                    break;
+                case 40:
+                    direction = 'down';
+                    break;
+                default:
+                    return;
+            }
+        }
+    };
+    function updateFood(){
+        //update food position
+        foodPosNum[0] = Math.floor(Math.random() * 40) ;
+        foodPosNum[1] = Math.floor(Math.random() * 20);
+        food.style.left = foodPosNum[0] * 20 + 'px';
+        food.style.top = foodPosNum[1] * 20 + 'px';
+    }
+    function showSnake(){
+        for(var j=0; j<body.length; j++){
+            if(body[j][3] == null){
+                body[j][3] = document.createElement('div');
+                body[j][3].className = 'snakeNode';
+                body[j][3].style.backgroundColor = body[j][2];
+                playGrounds.appendChild(body[j][3]);
+            }
+            //update snake ui
+            body[j][3].style.left = body[j][0] * 20 + 'px';
+            body[j][3].style.top = body[j][1] * 20 + 'px';
+        }
+    }
+    function snakeMove() {
+        var length = body.length - 1;
+        for( var i=length; i>0; i--){
+            body[i][0] = body[i-1][0];
+            body[i][1] = body[i-1][1]
+        }
+        switch (direction) {
+            case 'left':
+                body[0][0] = body[0][0] - 1;
+                break;
+            case 'up':
+                body[0][1] = body[0][1] - 1;
+                break;
+            case 'right':
+                body[0][0] = body[0][0] + 1;
+                break;
+            case 'down':
+                body[0][1] = body[0][1] + 1;
+                break;
+            default:
+                return;
+        }
+        //as snake eats the food
+        if(body[0][0] == foodPosNum[0] && body[0][1] == foodPosNum[1]){
+            var x = body[length][0];
+            var y = body[length][1];
+            body.push([x, y, '#64A600', null]);
+            updateFood();
+            sum++;
+            document.title = sum;
+        }
+        //as snake against the wall
+        if(body[0][0] < 0 || body[0][1] < 0 || body[0][0] > 39 || body[0][1] > 19){
+            clearInterval(timer);
+            alert('against the wall');
+            return;
+        }
+        showSnake();
+    }
+</script>
+</body>
+</html>
