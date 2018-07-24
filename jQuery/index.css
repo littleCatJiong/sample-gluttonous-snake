@@ -1,0 +1,14 @@
+.divContainer table {
+    border-collapse: collapse;
+}
+.divContainer td {
+    width: 20px;
+    height: 20px;
+    border: 1px solid #ccc;
+}
+.divContainer td.food {
+    background: #D2A2CC !important;
+}
+.divContainer td.body {
+    backgroundColor: #ccc;
+}
